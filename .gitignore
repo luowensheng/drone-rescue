@@ -1,0 +1,5 @@
+/static/outputs/*
+/__pycache__
+/init.sh
+/templates/home2.html
+/main*.py

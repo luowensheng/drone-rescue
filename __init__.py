@@ -8,7 +8,7 @@ def create_app(test_config=None):
     app.config['SECRET_KEY'] = 'h432hi5ohi3h5i5hi3o2hi'
 
 
-    from . import main
+    from . import entry 
 
-    app.register_blueprint(main.bp)
+    app.register_blueprint(entry.bp)
     return app
