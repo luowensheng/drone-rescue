@@ -7,14 +7,14 @@ def get_patch_indices(shape, patchsize, stride=None):
     stride = patchsize if stride is None else stride
     start_vertical = 0
     has_not_reached_length = True
-    img_width, img_height = shape
+    img_height, img_width = shape
 
     while has_not_reached_length:
 
-        if ( start_vertical+patchsize < img_width ):
+        if ( start_vertical + patchsize < img_height ):
             end_vertical = start_vertical + patchsize    
         else:
-            end_vertical = img_width
+            end_vertical = img_height
             
     
         start_horizontal = 0
@@ -22,19 +22,19 @@ def get_patch_indices(shape, patchsize, stride=None):
 
         while has_not_reach_width:
 
-           if (start_horizontal+patchsize > img_height):
-               end_horizontal  = img_height
+           if (start_horizontal+patchsize > img_width):
+               end_horizontal  = img_width
                has_not_reach_width = False
            else:
-               end_horizontal = start_horizontal+patchsize
+               end_horizontal = start_horizontal + patchsize
             
            yield [start_vertical, end_vertical], [start_horizontal, end_horizontal] 
        
-           start_horizontal+=stride
+           start_horizontal += stride
            
-        if not ( vertical_index + patchsize < img_width ):       
+        if not ( start_vertical + patchsize < img_height  ):       
             has_not_reached_length = False         
-        vertical_index +=stride 
+        start_vertical += stride 
     
         
 def run_on_patches(model,img, patchsize=400, add_separation_lines = True, width = 5) : 
@@ -43,7 +43,7 @@ def run_on_patches(model,img, patchsize=400, add_separation_lines = True, width 
         horizontal_patches = []
         output_img = []
         
-        img_width, img_height = (img.shape)
+        img_width, img_height, _ = img.shape
 
         for ((start_vertical, end_vertical),(start_horizontal, end_horizontal)) in get_patch_indices((img_width, img_height), patchsize=patchsize):
            
@@ -68,9 +68,10 @@ def run_on_patches(model,img, patchsize=400, add_separation_lines = True, width 
                 current_vertical_index = start_vertical
 
             # Append patch horizontally    
-            horizontal_patches.append(patch)    
+            horizontal_patches.append(patch)   
+            print(img.shape, patch.shape, [(start_vertical, end_vertical),(start_horizontal, end_horizontal)]) 
 
-        output_img.append(np.concatenate(horizontal_patches, axis=1)) 
+        output_img.append(np.concatenate(horizontal_patches, axis=1))
         output_img = np.concatenate(output_img, axis=0)
         return output_img
     
