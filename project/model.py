@@ -72,10 +72,10 @@ class KRCNN:
            return data 
         return type(data)
             
-    def __call__(self, data, conf = 0.5, patches=False):   
+    def __call__(self, data, min_confidence:float = 0.2) -> np.array : 
         image_np = self.load_img(data)
         img, outputs = self.predict(image_np)    
-        contains_detection = self.draw_results(img, outputs, conf)
+        contains_detection = self.draw_results(img, outputs, min_confidence)
         return img 
 
 

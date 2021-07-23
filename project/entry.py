@@ -29,32 +29,37 @@ def pred():
     form = request.args.to_dict()
     if len(form)==0:
         form = request.form.to_dict()
- 
-    if 'url' in form:   
+    
+    predict_from_url = 'url' in form
+
+    if predict_from_url :   
         filename = f"out_{time.time()}.png" 
         path =  form['url']   
         req = urllib.request.urlopen(path)
         arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
         img = cv2.imdecode(arr, -1)
         path = os.path.join(DIR, "static", "outputs", filename)
-        done = cv2.imwrite(path, img)
-        if not done:
+        img_saved_successfully = cv2.imwrite(path, img)
+
+        if not img_saved_successfully:
             return  render_template("home.html", has_pred=False)
                     
     else:
-        print(f"\n\n\n\n{'#'*20}\n\n\n")
         file = request.files['file']
         filename = secure_filename(file.filename)
-        ext = filename.split(".")[-1].lower() 
-        print(f"\n\n\n\n{'#'*20}\n\n\n")
-        if not ext in ['jpeg','gif','png','jpg']:
+        ext = filename.split(".")[-1].lower()
+        extension_is_allowed = ext in ['jpeg','gif','png','jpg']
+
+        if not extension_is_allowed:
             return  render_template("home.html", has_pred=False)
         
         fpath = os.path.join(DIR, "static", "outputs", filename) 
         file.save(fpath)  
         img = cv2.imread(fpath)
+    
+    img_not_read = img is None
 
-    if img is None:
+    if img_not_read:
        return  render_template("home.html", has_pred=False) 
 
     path = os.path.join("static", "outputs", filename) 
@@ -64,16 +69,16 @@ def pred():
                     out_paths,
                     filename=f"out_pred_{filename}", 
                     patchsize=500, 
-                    with_patches=True
+                    do_patch_prediction=True
                     )
     n=len(out_paths)
     return  render_template("home.html", has_pred=True, path=path, out_paths=out_paths, n=n)
 
 
 
-def make_prediction(img, out_paths, filename, patchsize, with_patches=False):
+def make_prediction(img: np.array, out_paths: list, filename:str, patchsize:int, do_patch_prediction:bool=False) -> None:
 
-    if with_patches:
+    if do_patch_prediction:
        output_img = utils.run_on_patches(model,
                                          img, 
                                          patchsize=patchsize,
