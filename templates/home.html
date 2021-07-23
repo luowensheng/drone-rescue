@@ -1,0 +1,56 @@
+<!doctype html>
+
+{% extends 'base.html' %}
+
+{% block title %}Drone Vision{% endblock %}
+
+<h1>Hello World</h1>
+
+{% block main %}
+
+<h1>Drone Vision</h1>
+
+
+<form action="pred" method="POST">
+    <label for="url">Image URL</label> 
+    <input type="url" name="url" value="" required>
+    <input type="submit" value="Submit">
+</form>
+
+<br/>
+<br/>
+<br/>
+
+
+<form action="pred" method="POST" enctype="multipart/form-data">
+    <label for="file">File name</label> 
+    <input type="file" accept="image/*" name="file" value="" required>
+<br/>
+
+    <input type="submit" value="Submit">
+</form>
+
+
+{% if has_pred %}
+    <h2>Image you have loaded</h2>
+    <h2>Input: </h2>
+    <img src={{path}} alt={{path}} >
+    {% for i in range(0,n) %}
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <h2>Output {{i+1}}: </h2>
+        <img src={{out_paths[i]}} alt={{out_paths[i]}}>
+    {% endfor %}
+{% endif %}
+
+
+
+
+
+{% endblock %}
+
+</html>
