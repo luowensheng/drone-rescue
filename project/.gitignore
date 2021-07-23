@@ -1,0 +1,4 @@
+/static/outputs/*
+/__pycache__
+/templates/home2.html
+/main[0-9].py
