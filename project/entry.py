@@ -19,7 +19,7 @@ DIR = os.path.join(os.getcwd(), "project")
 
 @bp.route("/")
 def home():   
-    return  render_template("home.html", has_pred=False)
+    return  render_template("home.html", contains_prediction=False)
 
 
 
@@ -30,9 +30,9 @@ def pred():
     if len(form)==0:
         form = request.form.to_dict()
     
-    predict_from_url = 'url' in form
+    from_url = 'url' in form
 
-    if predict_from_url :   
+    if from_url :   
         filename = f"out_{time.time()}.png" 
         path =  form['url']   
         req = urllib.request.urlopen(path)
@@ -42,7 +42,7 @@ def pred():
         img_saved_successfully = cv2.imwrite(path, img)
 
         if not img_saved_successfully:
-            return  render_template("home.html", has_pred=False)
+            return  render_template("home.html", contains_prediction=False)
                     
     else:
         file = request.files['file']
@@ -51,7 +51,7 @@ def pred():
         extension_is_allowed = ext in ['jpeg','gif','png','jpg']
 
         if not extension_is_allowed:
-            return  render_template("home.html", has_pred=False)
+            return  render_template("home.html", contains_prediction=False)
         
         fpath = os.path.join(DIR, "static", "outputs", filename) 
         file.save(fpath)  
@@ -60,7 +60,7 @@ def pred():
     img_not_read = img is None
 
     if img_not_read:
-       return  render_template("home.html", has_pred=False) 
+       return  render_template("home.html", contains_prediction=False) 
 
     path = os.path.join("static", "outputs", filename) 
 
@@ -72,7 +72,7 @@ def pred():
                     do_patch_prediction=True
                     )
     n=len(out_paths)
-    return  render_template("home.html", has_pred=True, path=path, out_paths=out_paths, n=n)
+    return  render_template("home.html", contains_prediction=True, path=path, out_paths=out_paths, n=n)
 
 
 

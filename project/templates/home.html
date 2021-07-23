@@ -31,17 +31,14 @@
 </form>
 
 
-{% if has_pred %}
+{% if contains_prediction %}
     <h2>Image you have loaded</h2>
     <h2>Input: </h2>
     <img src={{path}} alt={{path}} >
     {% for i in range(0,n) %}
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+        {% for _ in range(6) %}
+           <br/>
+        {% endfor %}
         <h2>Output {{i+1}}: </h2>
         <img src={{out_paths[i]}} alt={{out_paths[i]}}>
     {% endfor %}
