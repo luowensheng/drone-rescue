@@ -17,6 +17,9 @@ model = KRCNN()
 
 DIR = os.path.join(os.getcwd(), "project")
 
+ALLOWED_EXTENSIONS  =   ['jpeg','gif','png','jpg']
+
+
 @bp.route("/")
 def home():   
     return  render_template("home.html", contains_prediction=False)
@@ -42,15 +45,17 @@ def pred():
         img_saved_successfully = cv2.imwrite(path, img)
 
         if not img_saved_successfully:
+            flash("Image has not been loaded succesfully. There might be a problem with the url!")
             return  render_template("home.html", contains_prediction=False)
                     
     else:
         file = request.files['file']
         filename = secure_filename(file.filename)
         ext = filename.split(".")[-1].lower()
-        extension_is_allowed = ext in ['jpeg','gif','png','jpg']
+        extension_is_allowed = ext in ALLOWED_EXTENSIONS
 
         if not extension_is_allowed:
+            flash(f"Extension [{ext}] is not allowed!\nHere is a list of allowed extenssions:\n\t{ALLOWED_EXTENSIONS}")
             return  render_template("home.html", contains_prediction=False)
         
         fpath = os.path.join(DIR, "static", "outputs", filename) 
@@ -60,6 +65,7 @@ def pred():
     img_not_read = img is None
 
     if img_not_read:
+       flash("Image not loaded correctly. Please try again.")
        return  render_template("home.html", contains_prediction=False) 
 
     path = os.path.join("static", "outputs", filename) 
@@ -72,6 +78,7 @@ def pred():
                     do_patch_prediction=True
                     )
     n=len(out_paths)
+    flash("Image has been processed succesfully! Here are the results:\n")
     return  render_template("home.html", contains_prediction=True, path=path, out_paths=out_paths, n=n)
 
 
