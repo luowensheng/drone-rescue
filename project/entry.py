@@ -75,7 +75,7 @@ def pred():
                     out_paths,
                     filename=f"out_pred_{filename}", 
                     patchsize=500, 
-                    do_patch_prediction=True
+                    do_patch_prediction=False
                     )
     n=len(out_paths)
     flash("Image has been processed succesfully! Here are the results:\n")

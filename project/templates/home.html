@@ -31,6 +31,10 @@
 </form>
 
 
+{% for message in get_flashed_messages()%}
+    <h2 style="color:red;">{{ message }}</h2>
+{% endfor %}
+
 {% if contains_prediction %}
     <h2>Image you have loaded</h2>
     <h2>Input: </h2>
